@@ -1,9 +1,10 @@
 <?xml version="1.0" encoding="utf-8"?>
 <resources>
 
-    <string name="app_name">RESTCapstone</string>
+    <string name="app_name">Research_Monster</string>
     <string name="hello_world">Hello world!</string>
     <string name="action_settings">Settings</string>
-    <string name="title_activity_profile_acitivty">ProfileAcitivty</string>
+    <string name="title_activity_profile">Profile</string>
+    <string name="title_activity_all_projects">AllProjects</string>
 
 </resources>

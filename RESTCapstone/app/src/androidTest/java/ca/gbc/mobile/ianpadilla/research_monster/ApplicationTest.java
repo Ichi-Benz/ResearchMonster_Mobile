@@ -1,4 +1,4 @@
-package ca.gbc.mobile.stanpak.restcapstone;
+package ca.gbc.mobile.ianpadilla.research_monster;
 
 import android.app.Application;
 import android.test.ApplicationTestCase;
