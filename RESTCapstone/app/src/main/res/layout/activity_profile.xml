@@ -64,12 +64,17 @@
         android:id="@+id/viewAll_Button"
         android:layout_below="@+id/lastName_label"
         android:layout_alignParentLeft="true"
-        android:layout_alignParentStart="true" />
+        android:layout_alignParentStart="true"
+        android:layout_marginTop="46dp" />
 
-    <ListView
+    <TextView
         android:layout_width="wrap_content"
         android:layout_height="wrap_content"
-        android:id="@+id/listView"
-        android:layout_centerHorizontal="true"
-        android:layout_below="@+id/viewAll_Button" />
+        android:textAppearance="?android:attr/textAppearanceMedium"
+        android:text="experience"
+        android:id="@+id/experience_label"
+        android:layout_below="@+id/lastName_label"
+        android:layout_alignParentLeft="true"
+        android:layout_alignParentStart="true" />
+
 </RelativeLayout>

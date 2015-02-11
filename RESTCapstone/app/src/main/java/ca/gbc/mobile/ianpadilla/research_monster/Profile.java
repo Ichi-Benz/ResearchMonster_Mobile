@@ -14,7 +14,7 @@ import android.widget.TextView;
 
 public class Profile extends ActionBarActivity {
 
-    TextView student_id, email, summary, first_name, last_name;
+    TextView student_id, email, summary, first_name, last_name,experience;
 
     @Override
     protected void onCreate(Bundle savedInstanceState) {
@@ -27,6 +27,7 @@ public class Profile extends ActionBarActivity {
         summary = (TextView) findViewById(R.id.summary_label);
         first_name = (TextView) findViewById(R.id.firstName_label);
         last_name = (TextView) findViewById(R.id.lastName_label);
+        experience = (TextView) findViewById(R.id.experience_label);
 
         Intent intent = getIntent();
 
@@ -37,7 +38,7 @@ public class Profile extends ActionBarActivity {
         email.setText(Memail);
 
         String Msummary = intent.getStringExtra("summary");
-        summary.setText(Msummary);
+        summary.setText(Msummary.substring(3,Msummary.length()-6));
 
         String MfirstName = intent.getStringExtra("first_name");
         first_name.setText(MfirstName);
@@ -45,13 +46,17 @@ public class Profile extends ActionBarActivity {
         String MlastName = intent.getStringExtra("last_name");
         last_name.setText(MlastName);
 
-        viewProjects.setOnClickListener(new OnClickListener() {
+        String Mexperience = intent.getStringExtra("experience");
+        experience.setText(Mexperience.substring(3,Mexperience.length()-6));
+
+        //This line errors out, not sure why.......
+        /*        viewProjects.setOnClickListener(new OnClickListener() {
             @Override
             public void onClick(View v) {
                 Intent intent = new Intent(Profile.this,AllProjects.class);
                 Profile.this.startActivity(intent);
             }
-        });
+        });*/
     }
 
 

@@ -1,6 +1,4 @@
 package ca.gbc.mobile.ianpadilla.research_monster;
-//http://www.javacodegeeks.com/2010/10/android-full-app-part-2-using-http-api.html
-//http://www.coderanch.com/t/571797/Android/Mobile/Android-Application-Login
 
 import java.io.IOException;
 import java.io.UnsupportedEncodingException;
@@ -49,6 +47,9 @@ public class SignInapp extends ActionBarActivity {
     private String resp;
     private String errorMessage;
 
+    //Research Monster URL
+    final String URL_RM="http://rm.solutionblender.ca/login";
+
     //JSON Node names
     private static final String TAG_ID = "id";
     private static final String TAG_STUDENT_ID = "student_id";
@@ -64,9 +65,6 @@ public class SignInapp extends ActionBarActivity {
     private static final String TAG_LAST_NAME = "last_name";
     private static final String TAG_CREATED_AT = "created_at";
     private static final String TAG_UPDATED_AT = "updated_at";
-
-    //JSONArray
-    JSONArray user = null;
 
     protected void onCreate(Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
@@ -84,16 +82,16 @@ public class SignInapp extends ActionBarActivity {
                 new Thread(new Runnable(){
 
                    public void run(){
+                       String response;
 
-                       final String URL_RM="http://rm.solutionblender.ca/login";
+                       //Parameters to be sent to web service.
                        ArrayList<NameValuePair> postParameters = new ArrayList<>();
                        postParameters.add(new BasicNameValuePair("id",id.getText().toString()));
                        postParameters.add(new BasicNameValuePair("password",password.getText().toString()));
-                       postParameters.add(new BasicNameValuePair("mobile","android"));
-
-                       String response;
+                       postParameters.add(new BasicNameValuePair("mobile","android"));//<-- Sends to website to authenticate mobile user
 
                        try{
+                           //Takes response from web server, then converts it to string
                            response = SimpleHttpClient.executeHttpPost(URL_RM,postParameters);
                            String res = response.toString();
                            resp = res.replaceAll("\\s+","");
@@ -109,13 +107,16 @@ public class SignInapp extends ActionBarActivity {
                     //Log.w("Response: ",errorMessage + "1");
                     //Log.w("Response: ",resp + "1");
 
+                    //If id or password is incorrect, sends back html code.
                     if(resp.startsWith("<")){
                         error.setText("Incorrect id or password.");
                     }else{
+                        //If id and password is correct, response comes back as a JSON array.
                         JSONObject jsonObj = new JSONObject(resp);
                         String student_id = jsonObj.getString(TAG_STUDENT_ID);
                         String email = jsonObj.getString(TAG_EMAIL);
                         String summary = jsonObj.getString(TAG_SUMMARY);
+                        String experience = jsonObj.getString(TAG_EXPERIENCE);
                         String first_name = jsonObj.getString(TAG_FIRST_NAME);
                         String last_name = jsonObj.getString(TAG_LAST_NAME);
 
@@ -124,10 +125,12 @@ public class SignInapp extends ActionBarActivity {
                         intent.putExtra("student_id",student_id);
                         intent.putExtra("email",email);
                         intent.putExtra("summary",summary);
+                        intent.putExtra("experience",experience);
                         intent.putExtra("first_name",first_name);
                         intent.putExtra("last_name",last_name);
 
                         startActivity(intent);
+                        finish();
                     }
                     if(null != errorMessage && !errorMessage.isEmpty()){
                         error.setText(errorMessage);
