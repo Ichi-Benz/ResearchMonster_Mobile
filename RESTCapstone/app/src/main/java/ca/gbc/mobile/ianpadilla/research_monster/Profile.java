@@ -8,14 +8,43 @@ import android.view.View;
 import android.view.View.OnClickListener;
 import android.content.Intent;
 import android.widget.Button;
+import android.content.Intent;
+import android.widget.EditText;
+import android.widget.TextView;
 
 public class Profile extends ActionBarActivity {
+
+    TextView student_id, email, summary, first_name, last_name;
 
     @Override
     protected void onCreate(Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
         setContentView(R.layout.activity_profile);
         Button viewProjects = (Button) findViewById(R.id.login_button);
+
+        student_id = (TextView) findViewById(R.id.student_id_label);
+        email = (TextView) findViewById(R.id.email_label);
+        summary = (TextView) findViewById(R.id.summary_label);
+        first_name = (TextView) findViewById(R.id.firstName_label);
+        last_name = (TextView) findViewById(R.id.lastName_label);
+
+        Intent intent = getIntent();
+
+        String Mid = intent.getStringExtra("student_id");
+        student_id.setText(Mid);
+
+        String Memail = intent.getStringExtra("email");
+        email.setText(Memail);
+
+        String Msummary = intent.getStringExtra("summary");
+        summary.setText(Msummary);
+
+        String MfirstName = intent.getStringExtra("first_name");
+        first_name.setText(MfirstName);
+
+        String MlastName = intent.getStringExtra("last_name");
+        last_name.setText(MlastName);
+
         viewProjects.setOnClickListener(new OnClickListener() {
             @Override
             public void onClick(View v) {
