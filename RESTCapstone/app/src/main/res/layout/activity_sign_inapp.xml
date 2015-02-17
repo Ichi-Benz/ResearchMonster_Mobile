@@ -3,7 +3,8 @@
     android:layout_height="match_parent" android:paddingLeft="@dimen/activity_horizontal_margin"
     android:paddingRight="@dimen/activity_horizontal_margin"
     android:paddingTop="@dimen/activity_vertical_margin"
-    android:paddingBottom="@dimen/activity_vertical_margin" tools:context=".SignInapp">
+    android:paddingBottom="@dimen/activity_vertical_margin" tools:context=".SignInapp"
+    android:background="#ff27ed3d">
 
     <TextView
         android:layout_width="wrap_content"
@@ -12,10 +13,15 @@
         android:text="Research Monster"
         android:id="@+id/RM_label"
         android:layout_alignParentTop="true"
-        android:layout_centerHorizontal="true" />
+        android:layout_centerHorizontal="true"
+        android:layout_marginTop="50dp"
+        android:textSize="30dp"
+        android:textStyle="bold"
+        android:textColor="#ff000000"
+        />
 
     <EditText
-        android:layout_width="wrap_content"
+        android:layout_width="fill_parent"
         android:layout_height="wrap_content"
         android:inputType="textPersonName"
         android:hint="Enter Student ID"
@@ -27,31 +33,38 @@
         android:editable="true" />
 
     <EditText
-        android:layout_width="wrap_content"
+        android:layout_width="fill_parent"
         android:layout_height="wrap_content"
         android:inputType="textPassword"
         android:ems="10"
         android:id="@+id/password"
         android:password="false"
-        android:layout_below="@+id/student_id"
-        android:layout_alignLeft="@+id/student_id"
-        android:layout_alignStart="@+id/student_id"
         android:editable="true"
-        android:hint="Enter Password" />
+        android:hint="Enter Password"
+        android:layout_centerVertical="true"
+        android:layout_alignParentRight="true"
+        android:layout_alignParentEnd="true" />
 
     <Button
-        android:layout_width="wrap_content"
+        android:layout_width="fill_parent"
         android:layout_height="wrap_content"
         android:text="Log In"
         android:id="@+id/login_button"
-        android:layout_centerVertical="true"
-        android:layout_centerHorizontal="true" />
+        android:layout_below="@+id/password"
+        android:layout_alignParentLeft="true"
+        android:layout_alignParentStart="true"
+        android:layout_marginTop="50dp"
+        android:textSize="18dp"
+        android:layout_marginLeft="27dp"
+        android:layout_marginRight="27dp" />
 
     <TextView
         android:layout_width="wrap_content"
         android:layout_height="wrap_content"
         android:textAppearance="?android:attr/textAppearanceSmall"
         android:id="@+id/errorText"
-        android:layout_below="@+id/password"
-        android:layout_centerHorizontal="true" />
+        android:layout_marginTop="42dp"
+        android:layout_below="@+id/login_button"
+        android:layout_centerHorizontal="true"
+        android:textColor="#ffff0200" />
 </RelativeLayout>
