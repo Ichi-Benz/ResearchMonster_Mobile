@@ -1,12 +1,10 @@
 package ca.gbc.mobile.ianpadilla.research_monster;
-//http://www.javacodegeeks.com/2010/10/android-full-app-part-2-using-http-api.html
-//http://www.coderanch.com/t/571797/Android/Mobile/Android-Application-Login
 
 import java.io.IOException;
 import java.io.UnsupportedEncodingException;
 import java.net.URL;
 import java.util.ArrayList;
-
+import android.content.Intent;
 import org.apache.http.NameValuePair;
 import org.apache.http.client.HttpClient;
 import org.apache.http.impl.client.DefaultHttpClient;
@@ -33,6 +31,8 @@ import org.apache.http.client.entity.UrlEncodedFormEntity;
 import org.apache.http.client.methods.HttpPost;
 import org.apache.http.impl.client.DefaultHttpClient;
 import org.apache.http.message.BasicNameValuePair;
+import org.json.JSONArray;
+import org.json.JSONObject;
 
 import android.app.Activity;
 import android.os.Bundle;
@@ -40,12 +40,31 @@ import android.util.Log;
 
 public class SignInapp extends ActionBarActivity {
 
+    //UI Elements
     EditText id, password;
     TextView error;
     Button login;
     private String resp;
     private String errorMessage;
 
+    //Research Monster URL
+    final String URL_RM="http://rm.solutionblender.ca/login";
+
+    //JSON Node names
+    private static final String TAG_ID = "id";
+    private static final String TAG_STUDENT_ID = "student_id";
+    private static final String TAG_EMAIL = "email";
+    private static final String TAG_AVATAR = "avatar";
+    private static final String TAG_SUMMARY = "summary";
+    private static final String TAG_EXPERIENCE = "experience";
+    private static final String TAG_PERMISSIONS = "permissions";
+    private static final String TAG_ACTIVATED = "activated";
+    private static final String TAG_ACTIVATED_AT = "activated_at";
+    private static final String TAG_LAST_LOGIN = "last_login";
+    private static final String TAG_FIRST_NAME = "first_name";
+    private static final String TAG_LAST_NAME = "last_name";
+    private static final String TAG_CREATED_AT = "created_at";
+    private static final String TAG_UPDATED_AT = "updated_at";
 
     protected void onCreate(Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
@@ -56,80 +75,62 @@ public class SignInapp extends ActionBarActivity {
         login = (Button) findViewById(R.id.login_button);
         error = (TextView) findViewById(R.id.errorText);
 
-        /*login.setOnClickListener(new View.OnClickListener(){
-
-            @Override
-            public void onClick(View v) {
-                ArrayList<NameValuePair> postParameters = new ArrayList<NameValuePair>();
-                postParameters.add(new BasicNameValuePair("id",id.getText().toString()));
-                postParameters.add(new BasicNameValuePair("password",password.getText().toString()));
-
-                try{
-                    httpPost.setEntity(new UrlEncodedFormEntity(postParameters));
-                }catch(UnsupportedEncodingException e){
-                    e.printStackTrace();
-                }
-                try{
-                    HttpResponse response = httpClient.execute(httpPost);
-                    int code = response.getStatusLine().getStatusCode();
-                    if(code == 200){
-                        error.setText("Nice");
-                    }
-                    else{
-                        error.setText(code);
-                    }
-                }catch(ClientProtocolException e){
-                    e.printStackTrace();
-                }catch(IOException e){
-                    e.printStackTrace();
-                }
-            }
-        });*/
-
-
-
-
         login.setOnClickListener(new View.OnClickListener(){
             @Override
-            public void onClick(View v) {
+            public void onClick(View v){
+                //Start thread
                 new Thread(new Runnable(){
-                   public void run() {
-                       final String URL_RM="http://rm.solutionblender.ca/index.php/login";
-                       ArrayList<NameValuePair> postParameters = new ArrayList<NameValuePair>();
+
+                   public void run(){
+                       String response;
+
+                       //Parameters to be sent to web service.
+                       ArrayList<NameValuePair> postParameters = new ArrayList<>();
                        postParameters.add(new BasicNameValuePair("id",id.getText().toString()));
                        postParameters.add(new BasicNameValuePair("password",password.getText().toString()));
-                       postParameters.add(new BasicNameValuePair("mobile","20 dicks"));
-                       String response;
+                       postParameters.add(new BasicNameValuePair("mobile","android"));//<-- Sends to website to authenticate mobile user
+
                        try{
+                           //Takes response from web server, then converts it to string
                            response = SimpleHttpClient.executeHttpPost(URL_RM,postParameters);
-                           /*if(response =200){
-                               error.setText("Cool you logged in lel");
-                           }
-                           else{
-                               error.setText(response);
-                           }*/
                            String res = response.toString();
                            resp = res.replaceAll("\\s+","");
                        }catch(Exception e){
                             e.printStackTrace();
-                           errorMessage = e.getMessage();
+                            errorMessage = e.getMessage();
                        }
-                   }
-                }).start();
-                try{
-                    /*if(code == 200){
-                        error.setText("Nice");
                     }
-                    else{
-                        error.setText(code);
-                    }*/
-                    Log.w("faggot",errorMessage + "1");
-                    Log.w("faggot",resp + "1");
+                }).start();
 
-                    if(resp.equals("1")){
-                        error.setText(resp.toString());
+                try{
+                    //Log Responses for error check
+                    //Log.w("Response: ",errorMessage + "1");
+                    //Log.w("Response: ",resp + "1");
+
+                    //If id or password is incorrect, sends back html code.
+                    if(resp.startsWith("<")){
+                        error.setText("Incorrect id or password.");
                     }else{
-                        error.setText(resp.toString());
+                        //If id and password is correct, response comes back as a JSON array.
+                        JSONObject jsonObj = new JSONObject(resp);
+                        String student_id = jsonObj.getString(TAG_STUDENT_ID);
+                        String email = jsonObj.getString(TAG_EMAIL);
+                        String summary = jsonObj.getString(TAG_SUMMARY);
+                        String experience = jsonObj.getString(TAG_EXPERIENCE);
+                        String first_name = jsonObj.getString(TAG_FIRST_NAME);
+                        String last_name = jsonObj.getString(TAG_LAST_NAME);
+
+                        Intent intent = new Intent(SignInapp.this, Profile.class);
+
+                        intent.putExtra("student_id",student_id);
+                        intent.putExtra("email",email);
+                        intent.putExtra("summary",summary);
+                        intent.putExtra("experience",experience);
+                        intent.putExtra("first_name",first_name);
+                        intent.putExtra("last_name",last_name);
+
+                        startActivity(intent);
+                        finish();
                     }
                     if(null != errorMessage && !errorMessage.isEmpty()){
                         error.setText(errorMessage);

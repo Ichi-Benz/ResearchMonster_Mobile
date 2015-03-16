@@ -22,8 +22,8 @@ import org.apache.http.params.HttpConnectionParams;
 import org.apache.http.params.HttpParams;
 
 public class SimpleHttpClient {
-    public static final int HTTP_TIMEOUT = 30 * 1000;
 
+    public static final int HTTP_TIMEOUT = 30 * 1000;
     private static HttpClient mHttpClient;
 
     private static HttpClient getHttpClient()
@@ -41,17 +41,14 @@ public class SimpleHttpClient {
 
     public static String executeHttpPost(String url, ArrayList<NameValuePair> postParameters) throws Exception {
         BufferedReader in = null;
-        //int code;/*=404;
         try {
+            //Encoded form is needed to post parameters to url.
             HttpClient client = getHttpClient();
             HttpPost request = new HttpPost(url);
             UrlEncodedFormEntity formEntity = new UrlEncodedFormEntity(postParameters);
             request.setEntity(formEntity);
             HttpResponse response = client.execute(request);
-            //code = response.getStatusLine().getStatusCode();
-            //return code;
             in = new BufferedReader(new InputStreamReader(response.getEntity().getContent()));
-
             StringBuffer sb = new StringBuffer("");
             String line = "";
             String NL = System.getProperty("line.seperator");
@@ -62,10 +59,6 @@ public class SimpleHttpClient {
 
             String result = sb.toString();
             return result;
-        /*}catch(Exception e){
-            e.getStackTrace();
-        }*/
-            //return code;
         }
         finally {
             if (in != null) {
@@ -77,5 +70,4 @@ public class SimpleHttpClient {
             }
         }
     }
-
 }
