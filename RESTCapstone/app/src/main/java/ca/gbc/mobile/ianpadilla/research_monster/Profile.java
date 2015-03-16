@@ -2,6 +2,7 @@ package ca.gbc.mobile.ianpadilla.research_monster;
 
 import android.support.v7.app.ActionBarActivity;
 import android.os.Bundle;
+import android.text.Html;
 import android.view.Menu;
 import android.view.MenuItem;
 import android.view.View;
@@ -12,9 +13,18 @@ import android.content.Intent;
 import android.widget.EditText;
 import android.widget.TextView;
 
+import org.apache.http.NameValuePair;
+import org.apache.http.message.BasicNameValuePair;
+import org.json.JSONObject;
+
+import java.lang.reflect.Array;
+import java.util.ArrayList;
+
 public class Profile extends ActionBarActivity {
 
     TextView student_id, email, summary, first_name, last_name,experience;
+
+
 
     @Override
     protected void onCreate(Bundle savedInstanceState) {
@@ -32,22 +42,22 @@ public class Profile extends ActionBarActivity {
         Intent intent = getIntent();
 
         String Mid = intent.getStringExtra("student_id");
-        student_id.setText(Mid);
+        student_id.setText(Html.fromHtml(Mid));
 
         String Memail = intent.getStringExtra("email");
-        email.setText(Memail);
+        email.setText(Html.fromHtml(Memail));
 
         String Msummary = intent.getStringExtra("summary");
-        summary.setText(Msummary.substring(3,Msummary.length()-6));
+        summary.setText(Html.fromHtml(Msummary.substring(3,Msummary.length()-6)));
 
         String MfirstName = intent.getStringExtra("first_name");
-        first_name.setText(MfirstName);
+        first_name.setText(Html.fromHtml(MfirstName));
 
         String MlastName = intent.getStringExtra("last_name");
-        last_name.setText(MlastName);
+        last_name.setText(Html.fromHtml(MlastName));
 
         String Mexperience = intent.getStringExtra("experience");
-        experience.setText(Mexperience.substring(3,Mexperience.length()-6));
+        experience.setText(Html.fromHtml(Mexperience.substring(3,Mexperience.length()-6)));
 
         //This line errors out, not sure why.......
         /*        viewProjects.setOnClickListener(new OnClickListener() {
@@ -59,7 +69,9 @@ public class Profile extends ActionBarActivity {
         });*/
     }
 
+    public void btnViewProjects(){
 
+    }
     @Override
     public boolean onCreateOptionsMenu(Menu menu) {
         // Inflate the menu; this adds items to the action bar if it is present.
