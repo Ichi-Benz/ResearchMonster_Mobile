@@ -28,5 +28,4 @@
             android:label="@string/title_activity_all_projects" >
         </activity>
     </application>
-
 </manifest>

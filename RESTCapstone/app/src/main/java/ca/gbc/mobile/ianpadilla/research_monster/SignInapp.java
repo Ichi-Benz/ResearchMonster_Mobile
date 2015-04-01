@@ -12,7 +12,9 @@ import org.apache.http.message.BasicNameValuePair;
 
 import android.annotation.SuppressLint;
 import android.app.Activity;
+import android.graphics.Typeface;
 import android.os.Bundle;
+import android.view.Gravity;
 import android.view.View;
 import android.widget.Button;
 import android.widget.EditText;
@@ -48,8 +50,7 @@ public class SignInapp extends ActionBarActivity {
     private String errorMessage;
 
     //Research Monster URL
-    final String URL_RM="http://rm.solutionblender.ca/login";
-
+    final String URL_RM="http://research.solutionblender.ca/login";
     //JSON Node names
     private static final String TAG_ID = "id";
     private static final String TAG_STUDENT_ID = "student_id";
@@ -71,7 +72,9 @@ public class SignInapp extends ActionBarActivity {
         setContentView(R.layout.activity_sign_inapp);
 
         id = (EditText) findViewById(R.id.student_id);
+        id.setGravity(Gravity.CENTER);
         password = (EditText) findViewById(R.id.password);
+        password.setGravity(Gravity.CENTER);
         login = (Button) findViewById(R.id.login_button);
         error = (TextView) findViewById(R.id.errorText);
 
@@ -119,7 +122,7 @@ public class SignInapp extends ActionBarActivity {
                         String experience = jsonObj.getString(TAG_EXPERIENCE);
                         String first_name = jsonObj.getString(TAG_FIRST_NAME);
                         String last_name = jsonObj.getString(TAG_LAST_NAME);
-
+                        String avatar = jsonObj.getString(TAG_AVATAR);
                         Intent intent = new Intent(SignInapp.this, Profile.class);
 
                         intent.putExtra("student_id",student_id);
@@ -128,7 +131,7 @@ public class SignInapp extends ActionBarActivity {
                         intent.putExtra("experience",experience);
                         intent.putExtra("first_name",first_name);
                         intent.putExtra("last_name",last_name);
-
+                        intent.putExtra("avatar",avatar);
                         startActivity(intent);
                         finish();
                     }

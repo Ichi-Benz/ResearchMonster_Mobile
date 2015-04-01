@@ -1,5 +1,9 @@
 package ca.gbc.mobile.ianpadilla.research_monster;
 
+import android.graphics.Bitmap;
+import android.graphics.BitmapFactory;
+import android.graphics.drawable.Drawable;
+import android.os.AsyncTask;
 import android.support.v7.app.ActionBarActivity;
 import android.os.Bundle;
 import android.text.Html;
@@ -11,18 +15,26 @@ import android.content.Intent;
 import android.widget.Button;
 import android.content.Intent;
 import android.widget.EditText;
+import android.widget.ImageView;
+import android.widget.LinearLayout;
+import android.widget.RelativeLayout;
 import android.widget.TextView;
 
 import org.apache.http.NameValuePair;
 import org.apache.http.message.BasicNameValuePair;
 import org.json.JSONObject;
 
+import java.io.InputStream;
 import java.lang.reflect.Array;
+import java.net.URL;
 import java.util.ArrayList;
 
 public class Profile extends ActionBarActivity {
 
     TextView student_id, email, summary, first_name, last_name,experience;
+    ImageView avatar;
+    Bitmap bmp;
+    RoundedImage roundedImage;
 
 
 
@@ -30,6 +42,7 @@ public class Profile extends ActionBarActivity {
     protected void onCreate(Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
         setContentView(R.layout.activity_profile);
+
         Button viewProjects = (Button) findViewById(R.id.login_button);
 
         student_id = (TextView) findViewById(R.id.student_id_label);
@@ -38,8 +51,32 @@ public class Profile extends ActionBarActivity {
         first_name = (TextView) findViewById(R.id.firstName_label);
         last_name = (TextView) findViewById(R.id.lastName_label);
         experience = (TextView) findViewById(R.id.experience_label);
+        avatar = (ImageView) findViewById(R.id.imageView);
 
-        Intent intent = getIntent();
+        final Intent intent = getIntent();
+
+        new AsyncTask<Void, Void, Void>() {
+            @Override
+            protected Void doInBackground(Void... params) {
+                try {
+                    String Mavatar = intent.getStringExtra("avatar");
+                    String RM_URL = "http://research.solutionblender.ca/";
+                    String pic_url = RM_URL.concat(Mavatar);
+                    InputStream in = new URL(pic_url).openStream();
+                    bmp = BitmapFactory.decodeStream(in);
+                } catch (Exception e) {
+                    // log error
+                }
+                return null;
+            }
+            protected void onPostExecute(Void result) {
+                if (bmp != null) {
+                    //bmp = BitmapFactory.decodeResource(getResources(), R.drawable.bmp);
+                    roundedImage = new RoundedImage(bmp);
+                    avatar.setImageDrawable(roundedImage);
+                }
+            }
+        }.execute();
 
         String Mid = intent.getStringExtra("student_id");
         student_id.setText(Html.fromHtml(Mid));
@@ -47,8 +84,8 @@ public class Profile extends ActionBarActivity {
         String Memail = intent.getStringExtra("email");
         email.setText(Html.fromHtml(Memail));
 
-        String Msummary = intent.getStringExtra("summary");
-        summary.setText(Html.fromHtml(Msummary.substring(3,Msummary.length()-6)));
+        //String Msummary = intent.getStringExtra("summary");
+        //summary.setText(Html.fromHtml(Html.fromHtml((String)Msummary).toString()));
 
         String MfirstName = intent.getStringExtra("first_name");
         first_name.setText(Html.fromHtml(MfirstName));
@@ -56,17 +93,22 @@ public class Profile extends ActionBarActivity {
         String MlastName = intent.getStringExtra("last_name");
         last_name.setText(Html.fromHtml(MlastName));
 
-        String Mexperience = intent.getStringExtra("experience");
-        experience.setText(Html.fromHtml(Mexperience.substring(3,Mexperience.length()-6)));
+        //String Mexperience = intent.getStringExtra("experience");
+        //experience.setText(Html.fromHtml(Html.fromHtml((String)Mexperience).toString()));
 
-        //This line errors out, not sure why.......
-        /*        viewProjects.setOnClickListener(new OnClickListener() {
-            @Override
-            public void onClick(View v) {
-                Intent intent = new Intent(Profile.this,AllProjects.class);
-                Profile.this.startActivity(intent);
-            }
-        });*/
+    }
+    public static Drawable LoadImageFromWebOperations(String url) {
+        try {
+            InputStream is = (InputStream) new URL(url).getContent();
+            Drawable d = Drawable.createFromStream(is, "src name");
+            return d;
+        } catch (Exception e) {
+            return null;
+        }
+    }
+    public void onClickToProjects(View v) {
+        Intent intent = new Intent(Profile.this,AllProjects.class);
+        startActivity(intent);
     }
 
     public void btnViewProjects(){
