@@ -88,30 +88,6 @@
             android:layout_gravity="center"
             android:textStyle="bold" />
 
-        <TextView
-            android:layout_width="wrap_content"
-            android:layout_height="wrap_content"
-            android:textAppearance="?android:attr/textAppearanceMedium"
-            android:text="Computer Programmer"
-            android:fontFamily="sans-serif-condensed"
-            android:id="@+id/summary_label"
-            android:layout_below="@+id/email_label"
-            android:layout_centerHorizontal="true"
-            android:textSize="28dp"
-            android:layout_gravity="center" />
-
-        <TextView
-            android:layout_width="wrap_content"
-            android:layout_height="wrap_content"
-            android:textAppearance="?android:attr/textAppearanceMedium"
-            android:text="experience"
-            android:fontFamily="sans-serif-condensed"
-            android:id="@+id/experience_label"
-            android:layout_below="@+id/lastName_label"
-            android:layout_centerHorizontal="true"
-            android:textSize="28dp"
-            android:layout_gravity="center" />
-
         <Button
             style="?android:attr/buttonStyleSmall"
             android:layout_width="match_parent"

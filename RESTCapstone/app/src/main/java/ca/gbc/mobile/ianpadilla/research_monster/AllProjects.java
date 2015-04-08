@@ -27,6 +27,7 @@ import android.view.View.OnClickListener;
 import java.io.IOException;
 import java.io.InputStream;
 import java.io.InputStreamReader;
+import java.lang.reflect.Array;
 import java.util.ArrayList;
 import java.util.Objects;
 
@@ -39,7 +40,8 @@ public class AllProjects extends ActionBarActivity implements OnClickListener {
     HttpResponse resp;
     private String errorMessage;
     ArrayList<String> titles;
-    ArrayAdapter adapter;
+    CustomListAdapter adapter;
+    AllProjects mProject = this;
 
     @Override
     protected void onCreate(Bundle savedInstanceState) {
@@ -49,41 +51,43 @@ public class AllProjects extends ActionBarActivity implements OnClickListener {
 
         lvProjects = (ListView)findViewById(R.id.listProjects);
         titles = new ArrayList<String>();
-        adapter = new ArrayAdapter(this, android.R.layout.simple_list_item_1, titles);
+        adapter = new CustomListAdapter(this, R.layout.custom_list, titles);
         lvProjects.setAdapter(adapter);
 
-        new AsyncTaskRunner().execute();
+        new GetProjectsAsyncTask().execute();
+
     }
-    public class AsyncTaskRunner extends AsyncTask<String, Void, ArrayList<String>>{
-        protected ArrayList<String> doInBackground(String... params){
-            ArrayList<String> items = new ArrayList<String>();
+    public class GetProjectsAsyncTask extends AsyncTask<String , Void, ArrayList<String>>{
+
+        @Override
+        protected ArrayList<String> doInBackground(String... params) {
+            ArrayList<String> arrItem = new ArrayList<String>();
             try {
+
                 resp = SimpleHttpClient.executeHttpGet(URL_RM);
                 HttpEntity res = resp.getEntity();
 
-                Log.d("JSON", convertStreamToString(res.getContent(), "UTF-8"));
-                // resp = res.replaceAll("\\s+","");
 
-                JSONArray array = new JSONArray(convertStreamToString(res.getContent(), "UTF-8"));
-                String title;
+                String jsonString = convertStreamToString(res.getContent(), "UTF-8");
+                Log.d("JSON", jsonString);
+                JSONObject row;
+                JSONArray array = new JSONArray(jsonString);
 
                 for (int i = 0; i < array.length(); i++) {
-                    JSONObject row = array.getJSONObject(i);
-                    if(row.equals("title")){
-                        title = row.getString("title");
-                        items.add(title);
-                    }
+                    row = array.getJSONObject(i);
+                    String item = row.getString("title");
+                    Log.w("item", item);
+                    arrItem.add(item);
                 }
-            }
-            catch (Exception e) {
+                return arrItem;
+            }catch (Exception e){
                 e.printStackTrace();
             }
-            return items;
+            return null;
         }
-
-        protected void onPostExecute(ArrayList<String> items){
-            titles.clear();
-            titles.addAll(items);
+        protected void onPostExecute(ArrayList<String> arrItem){
+            super.onPostExecute(arrItem);
+            titles.addAll(arrItem);
             adapter.notifyDataSetChanged();
         }
     }
@@ -126,5 +130,12 @@ public class AllProjects extends ActionBarActivity implements OnClickListener {
     @Override
     public void onClick(View v) {
 
+    }
+    public void fillString(){
+        titles.add("Android App for Ryerson");
+        titles.add("Kitty Treat Dispenser");
+        titles.add("Web Design for Prestige Worldwide");
+        titles.add("Web Design for Prestige Worldwide");
+        titles.add("Android App for Ryerson");
     }
 }

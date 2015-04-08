@@ -13,6 +13,7 @@ import org.apache.http.message.BasicNameValuePair;
 import android.annotation.SuppressLint;
 import android.app.Activity;
 import android.graphics.Typeface;
+import android.os.AsyncTask;
 import android.os.Bundle;
 import android.view.Gravity;
 import android.view.View;
@@ -78,70 +79,67 @@ public class SignInapp extends ActionBarActivity {
         login = (Button) findViewById(R.id.login_button);
         error = (TextView) findViewById(R.id.errorText);
 
-        login.setOnClickListener(new View.OnClickListener(){
+        login.setOnClickListener(new View.OnClickListener() {
             @Override
-            public void onClick(View v){
-                //Start thread
-                new Thread(new Runnable(){
+            public void onClick(View v) {
+                new AsyncTask<Void, Void, Void>(){
+                    @Override
+                    protected Void doInBackground(Void... params){
+                        //Parameters to be sent to web service.
+                        ArrayList<NameValuePair> postParameters = new ArrayList<>();
+                        postParameters.add(new BasicNameValuePair("id",id.getText().toString()));
+                        postParameters.add(new BasicNameValuePair("password",password.getText().toString()));
+                        postParameters.add(new BasicNameValuePair("mobile","android"));
+                        try{
+                            String response;
+                            response = SimpleHttpClient.executeHttpPost(URL_RM,postParameters);
+                            String res = response.toString();
+                            resp = res.replaceAll("\\s+","");
+                        }catch(Exception e){
 
-                   public void run(){
-                       String response;
-
-                       //Parameters to be sent to web service.
-                       ArrayList<NameValuePair> postParameters = new ArrayList<>();
-                       postParameters.add(new BasicNameValuePair("id",id.getText().toString()));
-                       postParameters.add(new BasicNameValuePair("password",password.getText().toString()));
-                       postParameters.add(new BasicNameValuePair("mobile","android"));//<-- Sends to website to authenticate mobile user
-
-                       try{
-                           //Takes response from web server, then converts it to string
-                           response = SimpleHttpClient.executeHttpPost(URL_RM,postParameters);
-                           String res = response.toString();
-                           resp = res.replaceAll("\\s+","");
-                       }catch(Exception e){
-                            e.printStackTrace();
-                            errorMessage = e.getMessage();
-                       }
+                        }
+                        return null;
                     }
-                }).start();
+                    protected void onPostExecute(Void result){
+                        try{
+                            //Log Responses for error check
+                            Log.w("Response: ",resp + "1");
 
-                try{
-                    //Log Responses for error check
-                    //Log.w("Response: ",errorMessage + "1");
-                    //Log.w("Response: ",resp + "1");
+                            //If id or password is incorrect, sends back html code.
+                            if(resp.startsWith("<")){
+                                error.setText("Incorrect id or password.");
+                            }else{
+                                //If id and password is correct, response comes back as a JSON array.
+                                JSONObject jsonObj = new JSONObject(resp);
+                                String student_id = jsonObj.getString(TAG_STUDENT_ID);
+                                String email = jsonObj.getString(TAG_EMAIL);
+                                String summary = jsonObj.getString(TAG_SUMMARY);
+                                String experience = jsonObj.getString(TAG_EXPERIENCE);
+                                String first_name = jsonObj.getString(TAG_FIRST_NAME);
+                                String last_name = jsonObj.getString(TAG_LAST_NAME);
+                                String avatar = jsonObj.getString(TAG_AVATAR);
+                                Intent intent = new Intent(SignInapp.this, Profile.class);
 
-                    //If id or password is incorrect, sends back html code.
-                    if(resp.startsWith("<")){
-                        error.setText("Incorrect id or password.");
-                    }else{
-                        //If id and password is correct, response comes back as a JSON array.
-                        JSONObject jsonObj = new JSONObject(resp);
-                        String student_id = jsonObj.getString(TAG_STUDENT_ID);
-                        String email = jsonObj.getString(TAG_EMAIL);
-                        String summary = jsonObj.getString(TAG_SUMMARY);
-                        String experience = jsonObj.getString(TAG_EXPERIENCE);
-                        String first_name = jsonObj.getString(TAG_FIRST_NAME);
-                        String last_name = jsonObj.getString(TAG_LAST_NAME);
-                        String avatar = jsonObj.getString(TAG_AVATAR);
-                        Intent intent = new Intent(SignInapp.this, Profile.class);
-
-                        intent.putExtra("student_id",student_id);
-                        intent.putExtra("email",email);
-                        intent.putExtra("summary",summary);
-                        intent.putExtra("experience",experience);
-                        intent.putExtra("first_name",first_name);
-                        intent.putExtra("last_name",last_name);
-                        intent.putExtra("avatar",avatar);
-                        startActivity(intent);
-                        finish();
+                                intent.putExtra("student_id",student_id);
+                                intent.putExtra("email",email);
+                                intent.putExtra("summary",summary);
+                                intent.putExtra("experience",experience);
+                                intent.putExtra("first_name",first_name);
+                                intent.putExtra("last_name",last_name);
+                                intent.putExtra("avatar",avatar);
+                                startActivity(intent);
+                                finish();
+                            }
+                            if(null != errorMessage && !errorMessage.isEmpty()){
+                                error.setText(errorMessage);
+                            }
+                        }catch(Exception e){
+                            error.setText(e.getMessage());
+                        }
                     }
-                    if(null != errorMessage && !errorMessage.isEmpty()){
-                        error.setText(errorMessage);
-                    }
-                }catch(Exception e){
-                    error.setText(e.getMessage());
-                }
+                }.execute();
             }
+
         });
 
     }
